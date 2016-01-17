@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<script src="https://fb.me/react-0.14.6.js"></script>
+		<script src="https://fb.me/react-dom-0.14.6.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+	</head>
+
+	<body>
+		<div id="example">
+		</div>
+			<div id="add">
+				<form action="">
+					<label>Name
+						<input type="text" name="name" />
+					</label>
+					<label>Time
+						<input type="text" name="time" />
+					</label>
+					<label>Method
+						<input type="textarea" name="method" />
+					</label>
+				</form>
+			</div>
+
+		<script type="text/babel">
+			var RecipeList = React.createClass({
+				getInitialState: function() {
+					return {data: []};
+				},
+				componentDidMount: function() {
+					$.ajax({
+						url: this.props.url,
+						dataType: 'json',
+						cache: false,
+						success: function(data) {
+							this.setState({data: data});
+						}.bind(this),
+						error: function (xhr, status, err) {
+							console.error(this.props.url, status, err.toString());
+						}.bind(this)
+					});
+				},
+				render: function () {
+					return (
+						<div className="recipeList">
+							<h1>Recipe list</h1>
+							<table>
+							<tbody>
+							{(this.state.data || []).map(function(value) {
+								return <tr><td key={value.ID}>{value.Name}</td><td>{value.Method}</td><td>{value.Time}</td></tr>
+							})}
+							</tbody>
+							</table>
+						</div>
+					);
+				}
+			});
+			ReactDOM.render(
+				<RecipeList url="http://192.168.56.101:8082/list" />,
+				document.getElementById('example')
+			);
+		</script>
+	</body>
+
+</html>
